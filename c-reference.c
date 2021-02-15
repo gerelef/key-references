@@ -416,3 +416,54 @@ int main(int argc, char **argv)
   
   return 0;
 }
+
+/* ----------------------------- Getting dynamic input from C -------------------------------- */
+//https://brennan.io/2015/01/16/write-a-shell-in-c/
+/*The meat of the function is within the (apparently infinite) 
+ * while (1) loop. In the loop, we read a character 
+ * (and store it as an int, not a char, that’s important! 
+ * EOF is an integer, not a character, and if you want to check for 
+ * it, you need to use an int. This is a common beginner 
+ * C mistake.). If it’s the newline, or EOF, we null 
+ * terminate our current string and return it. Otherwise, 
+ * we add the character to our existing string. 
+ */
+
+#define LSH_RL_BUFSIZE 1024
+char *lsh_read_line(void)
+{
+  int bufsize = LSH_RL_BUFSIZE;
+  int position = 0;
+  char *buffer = malloc(sizeof(char) * bufsize);
+  int c;
+
+  if (!buffer) {
+    fprintf(stderr, "lsh: allocation error\n");
+    exit(EXIT_FAILURE);
+  }
+
+  while (1) {
+    // Read a character
+    c = getchar();
+
+    // If we hit EOF, replace it with a null character and return.
+    if (c == EOF || c == '\n') {
+      buffer[position] = '\0';
+      return buffer;
+    } else {
+      buffer[position] = c;
+    }
+    position++;
+
+    // If we have exceeded the buffer, reallocate.
+    if (position >= bufsize) {
+      bufsize += LSH_RL_BUFSIZE;
+      buffer = realloc(buffer, bufsize);
+      if (!buffer) {
+        fprintf(stderr, "lsh: allocation error\n");
+        exit(EXIT_FAILURE);
+      }
+    }
+  }
+}
+
