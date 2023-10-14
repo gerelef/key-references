@@ -467,3 +467,23 @@ char *lsh_read_line(void)
   }
 }
 
+/*********************************************************************************/
+// https://nullprogram.com/blog/2023/10/08/
+// For GCC and Clang, my favorite assert macro now looks like this:
+
+#define assert(c)  while (!(c)) __builtin_unreachable()
+/*
+* It has useful properties beyond the usual benefits:
+*   It does not require separate definitions for debug and release builds. Instead it’s controlled by the presence of Undefined Behavior Sanitizer (UBSan), which is already present/absent in these circumstances. That includes fuzz testing.
+*   libubsan provides a diagnostic printout with a file and line number.
+*   In release builds it turns into a practical optimization hint.
+*/
+
+// Next, my “standard” set of macros:
+#define sizeof(x)    (size)sizeof(x)
+#define alignof(x)   (size)_Alignof(x)
+#define countof(a)   (sizeof(a) / sizeof(*(a)))
+#define lengthof(s)  (countof(s) - 1)
+// While I still prefer ALL_CAPS for constants, I’ve adopted lowercase for function-like macros because it’s nicer to read. 
+//  Author note: i disagree with lowercase for macros, this can lead to accidental bugs
+
