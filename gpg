@@ -1,0 +1,28 @@
+https://gist.github.com/ankurk91/c4f0e23d76ef868b139f3c28bde057fc
+gpg --gen-key
+
+gpg --list-secret-keys --keyid-format LONG
+stored at: ~/.gnupg/secring.gpg
+
+-------------------------------
+sec   4096R/COPY_LONG_KEY 2016-08-11 [expires: 2018-08-11]
+uid                          User Name <user.name@email.com>
+ssb   4096R/62E5B29EEA7145E 2016-08-11
+
+gpg --armor --export PASTE_LONG_KEY_HERE > gpg-key.txt
+
+git config --global user.signingkey PASTE_LONG_KEY_HERE
+git config --global commit.gpgsign true
+
+
+
+Remember password:
+nano ~/.gnupg/gpg-agent.conf
+
+default-cache-ttl 86400
+max-cache-ttl 86400
+
+gpg-agent --daemon
+
+> This worked for me on Windows 10 (Note that I use the absolute path to gpg.exe):
+> git config --global gpg.program "C:\Program Files (x86)\GnuPG\bin\gpg.exe"
