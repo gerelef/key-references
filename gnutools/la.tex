@@ -1,0 +1,312 @@
+% #! /usr/bin/pdflatex \catcode35=14 \input
+% \catcode`\#=6
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% for this unique shebang, read more here:
+%  https://tex.stackexchange.com/a/216002
+%  the correct solution here is /usr/bin/env -[v]S pdflatex ...
+%  but it hangs, and I cannot debug it [easily], just replace
+%  the absolute path (run `which pdflatex`) w/ your own
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% install `texlive' to use
+% Use pdflatex to compile this
+% DON'T use spaces for filenames
+% run "pdflatex -halt-on-error la.tex"
+%  "-parse-first-line If the first line of the main input file begins with %& parse it to look for a dump name or a -translate-file option."
+%  https://tex.stackexchange.com/a/172818
+% The first line of an input file starting with %& 
+% is a special directive used in the TeX typesetting system. 
+% This line is called the format line, and it is used to 
+% specify a precompiled format file that TeX should use 
+% for the document.
+% A format is a binary file that TeX can load into memory 
+% to process a document faster. It contains the memory dump of a 
+% TeX engine after it has processed a set of macro definitions. 
+% By using a format, TeX can skip the time-consuming step of 
+% reading and processing macro definitions every time it 
+% processes a document.
+% The %& directive tells TeX to use the specified format 
+% instead of the default one. For example, if the first 
+% line of your document is %&latex, then TeX will use the 
+% latex.fmt format file.
+%  - Phind (GPT4 Model)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% BASIC STRUCTURE
+%\documentclass[options]{class}
+%Preamble commands, if needed
+%
+%\begin{document}
+%Document text & commands here
+%
+%\begin{environment1}
+%Environment 1 commands & text here
+
+%\end{environment1}
+%
+%More document text & commands here
+%
+%\begin{environment2}
+%Environment 2 commands \& text here
+%\end{environment2}
+%
+%\end{document} 
+
+% Notes:
+% - Document classes: article, letter, report, slides, book, beamer, exam (etc.)
+% - Document options: 10pt, 11pt, 12pt; letterpaper, legalpaper, executivepaper, a4paper, a5paper, b5paper; onecolumn, twocolumn; notitlepage; titlepage
+% - options for formatting command \documentclass are optional
+% - Useful environments: abstract, equation, eqnarray, figure, table, tabular, center, itemize, enumerate, appendix, thebibliography
+% - Environments can be nested
+% - Comment lines TEX begin with a % . Any input past a % is ignored.
+
+% Common constructs
+
+% Creating a title page
+% - \title{Title text}
+% - \author{Author names and addresses}
+% - the command \maketitle will create the page using the information provided
+
+% Creating logical sections of text: 
+% - \part 
+% - \chapter 
+% - \section 
+% - \subsection 
+% - \subsubsection
+% - \paragraph 
+% - \tableofcontents 
+% - \listoffigures 
+% - \listoftables 
+
+% Mathematics
+% - In-line: $y = 3x^2 + 4x + 2$ ($ puts TeX in math mode; second $ exits math mode)
+% - Displayed: use \begin{equation} ... \end{equation}
+% - Remember to use $a$ (inline) for variable $a$ (e.g.)
+% - Common function names are not set in italics, so in math mode use, e.g.: \sin \cos \exp
+
+% Tables
+% - For math, use eqnarray env
+% - For text, use tabular env
+% - Basic syntax
+% - \begin{env}{lcr} % env = "eqnarray" or "tabular"
+%   a & b & c \\
+%   d & e & f
+%   \end{env}
+% - % where l ==> left, c ==> center, r ==> right, and the number of
+% - % these in the argument is the number of columns 
+% Captions: \caption{text} (in figure or table env) 
+
+% Cross-referencing: \label{tag} associates a counter with tag
+% - In equation environment, counter is equation counter
+% - In figure caption, figure counter
+% - In table caption, table counter
+% - In running text, section counter
+% - \ref{tag} references the counter associated with tag
+% - Convention: tag $\to$ tag_type:tag_name (e.g.: sec:intro) (usual types: eq sec tbl fig)
+
+% https://inside.mines.edu/~dmwood/fs02-computing/FieldSession02/LaTeX/node8.html
+% https://www.overleaf.com/learn/latex/How_to_Write_a_Thesis_in_LaTeX_(Part_5)%3A_Customising_Your_Title_Page_and_Abstract
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[draft]{article}
+
+\PackageInfo{MyInfoPackageTest}{Testing info log}
+\PackageWarningNoLine{MyWarningPackageTest}{Testing warn log}
+% \PackageError{MyErrorPackageTest}{error text}{help text}
+%  this crashes the compilation
+
+% latex package to check/use draft thingy.
+\usepackage{ifdraft}
+
+% good package for monospace output, e.g. textual output
+\usepackage{verbatim}
+
+% minteed is a package for code, uses pygments as a backend
+% pygments REQUIRED! texlive-minted* is the fedora package
+% this also requires -shell-escape . . .
+\usepackage{fancyvrb}
+% THIS IS A HACK, READ MORE BELOW
+\makeatletter 
+\def\KV@FV@lastline@default{%
+  \let\FancyVerbStopNum\m@ne
+  \let\FancyVerbStopString\relax}
+\fvset{lastline}
+% THIS IS A HACK, READ MORE BELOW
+% authors note: it still didn't work :( guess no colours for us
+\makeatother
+% https://tex.stackexchange.com/a/623823
+\usepackage{minted}
+\usemintedstyle{default}
+%
+% What do \makeatletter and \makeatother do?
+%
+% All characters in TeX are assigned a Category Code or 
+% "catcode". There are 16 catcodes in all, some containing 
+% just a single character, e.g. \ is (normally) catcode 0, 
+% {, catcode 1 etc. Normal characters are catcode 11; 
+% this category normally comprises all of the letter characters. 
+% The @ symbol is given the catcode of 12, which means it is 
+% not treated as a normal letter. The effects of this are that 
+% @ cannot normally be used in user document files as part 
+% of a multicharacter macro name. (All other non-letter 
+% characters are also forbidden in macro names: for example, 
+% \foo123, and \foo?! are not valid macro names.)
+%
+% In LaTeX class and package files, however, @ 
+% is treated as a normal letter (catcode 11) and 
+% this allows package writers to make macro-names with 
+% @. The advantage of this is that such macro names are 
+% automatically protected from regular users: since they 
+% cannot use @ as a normal letter, there is no accidental 
+% way for a user to override or change a macro that is 
+% part of the internal workings of a package.
+%
+% However, it is sometimes necessary in user documents 
+% to have access to such package-internal macros, 
+% and so the commands \makeatletter and \makeatother 
+% change the catcode of @ from 12 to 11 and 11 to 12, 
+% respectively.
+% - https://tex.stackexchange.com/a/8353
+
+\title{Hello, Title!}
+\author{Key, Reference, 1023, South Dakota}
+\date{1821, 1st July}
+
+% Some classes require \title, \author and similar 
+% declarations to be placed after \begin{document}.
+% IIRC, you won't be able to use babel shorthands 
+% if your \title etc. are in the preamble unless 
+% you use external packages to enable it.
+
+% allow only \chapter in ToC
+\setcounter{tocdepth}{0}
+% every \begin needs to close with \end
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+
+\ifoptiondraft{
+    \section{Draft OPTION Section}
+    Draft OPTION SET IN DOCUMENT CLASS!
+}{
+    \section{Final OPTION Section}
+    Final OPTION SET IN DOCUMENT CLASS!
+}
+
+\ifdraft {
+    \section[12pt]{Actual Draft Section}
+    This section will only be displayed in draft mode.
+}{
+    \section{Actual Final Section}
+    This section will only be displayed in final mode.
+}
+
+\section*{Test section}
+
+% the last \ escapes the space from what I can gather, otherwise it gets stuck together
+Hello World! This is my first \LaTeX\ document
+
+One-line code formatting also works with \texttt{minted}. For example, a small fragment of HTML like this:
+\mint{html}|<h2>Something <b>here</b></h2>|
+\noindent can be formatted correctly.
+
+\begin{verbatim}
+// Verbatim is better for textual output, rather than code.
+// Hello, world!
+class HelloWorld {
+    public static void main(String args[]) {
+        System.out.println("Hello Java");  
+    }
+}
+\end{verbatim}
+
+% minted code section
+% \begin{minted}[linenos, mathescape]{python3}
+% # Writing boilerplate code to avoid writing boilerplate code!
+% # https://stackoverflow.com/questions/32910096/is-there-a-way-to-auto-generate-a-str-implementation-in-python
+%
+% # Defined as $\pi=\lim_{n\to\infty}\frac{P_n}{d}$ where $P$ is the perimeter
+% # of an $n$-sided regular polygon circumscribing a
+% # circle of diameter $d$.
+%
+% if __name__ == "__main__":
+%     print("test??!")
+%
+% def auto_str(cls):
+%     """Automatically implements __str__ for any class."""
+%
+%     def __str__(self):
+%         return '%s(%s)' % (
+%             type(self).__name__,
+%             ', '.join('%s=%s' % item for item in vars(self).items())
+%         )
+%
+%     cls.__str__ = __str__
+%     return cls
+% \end{minted}
+
+\hrulefill % or just hrule
+
+
+\paragraph*{
+    This is some example text\footnote{\label{myfootnote}Hello footnote}.
+}
+
+
+% 0 to 4 denotes the pagebreak request "intensity"
+% don't use a number to always break page
+\pagebreak[4]
+% import and embed file
+% \inputminted{}{jq.sh}
+\section*{My Section}
+
+% generally shouldn’t use \begin{center} … \end{center} 
+% for headings. It’s really better used to make lists or 
+% similar. A better way to centre your title headings is 
+% to use the titlesec package
+\paragraph*{
+    First section paragraph. boo boo ha ha.
+}
+
+\subsection{
+    my subsection title
+}
+\paragraph*{
+    subsection paragraph
+}
+\subsubsection*{
+    my subsubsection title
+}
+
+\subsection*{
+    asterisk affects numbering
+}
+
+\paragraph*{
+    subsubsection paragraph
+}
+
+% The article class doesn't define the \chapter command, 
+% because articles don’t have chapters. Instead they have
+% sections, subsections, etc. If you really want to use 
+% article, then you might want to consider using \section, 
+% \subsection and so on.
+% 
+% If you really want to use the \chapter command, then 
+% I’d suggest using the book or report document classes.
+%
+% \chapter*{
+%     Chapter
+% }
+%
+% \chapter{
+%     Numbered Chapter
+% }
+% https://tex.stackexchange.com/a/117163
+
+\end{document}
+
