@@ -7,6 +7,9 @@
 %  but it hangs, and I cannot debug it [easily], just replace
 %  the absolute path (run `which pdflatex`) w/ your own
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% nice guide if we forget something somewhat inconsequential
+% https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes#Including_title,_author_and_date_information
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % install `texlive' to use
 % Use pdflatex to compile this
 % DON'T use spaces for filenames
@@ -115,6 +118,8 @@
 
 % latex package to check/use draft thingy.
 \usepackage{ifdraft}
+% good package for setting margins etc.
+%\usepackage{fullpage}
 
 % good package for monospace output, e.g. textual output
 \usepackage{verbatim}
@@ -307,6 +312,35 @@ class HelloWorld {
 %     Numbered Chapter
 % }
 % https://tex.stackexchange.com/a/117163
+
+% block math mode
+$$2\left(\frac{1}{x^2-1}\right)$$
+
+% lists
+\begin{enumerate}
+    \item pencil
+    \item calculator
+    \item assessments
+\end{enumerate}
+
+\begin{itemize}
+    \item one item
+    \item another
+\end{itemize}
+
+% tables
+% The “{r|cl}” after the tabular \begin{tabular} indicate the alignment of the three columns: right,
+% center, and left. This is mandatory as it specifies the layout of the table. For more columns, type more
+% alignment commands, e.g. for a table with 5 columns all aligned to the right, you would use rrrrr.
+%  The vertical bar | between the r and c indicates that a vertical line should be drawn between those columns.’
+%  The & separates the columns in the body of the table.
+%  A \\ signifies the end of each line of the table.
+%  The command \hline means that a horizontal line should be inserted
+\begin{tabular}{r|cl}
+    1st column & 2nd column & 3rd column\\
+    \hline
+    a & b & c
+\end{tabular}
 
 \end{document}
 
