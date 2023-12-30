@@ -1,0 +1,69 @@
+// there is no ideal style for all types and the std library doesn't presume to dictate one. 
+// fmt::Display is not implemented for Vec<T> or for any other generic containers. fmt::Debug must then be used for these generic cases.
+// for any new container type which is not generic, fmt::Display can be implemented.
+
+use std::fmt; // Import `fmt`
+
+// A structure holding two numbers. `Debug` will be derived so the results can
+// be contrasted with `Display`.
+#[derive(Debug)]
+struct MinMax(i64, i64);
+
+// Implement `Display` for `MinMax`.
+impl fmt::Display for MinMax {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Use `self.number` to refer to each positional data point.
+        write!(f, "({}, {})", self.0, self.1)
+    }
+}
+
+// Define a structure where the fields are nameable for comparison.
+#[derive(Debug)]
+struct Point2D {
+    x: f64,
+    y: f64,
+}
+
+// Similarly, implement `Display` for `Point2D`.
+impl fmt::Display for Point2D {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Customize so only `x` and `y` are denoted.
+        write!(f, "x: {}, y: {}", self.x, self.y)
+    }
+}
+
+// AUTHOR'S CODE
+// A nice learning resource is this: https://doc.rust-lang.org/std/fmt/type.Result.html
+// Scroll to "implementations" and see any cool impl in the stdlib.
+impl fmt::Binary for Point2D {
+    fn fmt(&self, f: &mut fmt:Formatter<'_>) -> fmt::Result {
+        let x_string = fmt::Binary::fmt(self.x, f);
+        let y_string = fmt::Binary::fmt(self.y, f);
+        write!(f, "{x_string}{y_string}") // this is an implicit return because there's no semicolon
+    }
+}
+
+fn main() {
+    let minmax = MinMax(0, 14);
+
+    println!("Compare structures:");
+    println!("Display: {}", minmax);
+    println!("Debug: {:?}", minmax);
+
+    let big_range =   MinMax(-300, 300);
+    let small_range = MinMax(-3, 3);
+
+    println!("The big range is {big} and the small is {small}",
+             small = small_range,
+             big = big_range);
+
+    let point = Point2D { x: 3.3, y: 7.2 };
+
+    println!("Compare points:");
+    println!("Display: {}", point);
+    println!("Debug: {:?}", point);
+
+    // Error. Both `Debug` and `Display` were implemented, but `{:b}`
+    // requires `fmt::Binary` to be implemented. This will not work.
+    // println!("What does Point2D look like in binary: {:b}?", point);
+}
