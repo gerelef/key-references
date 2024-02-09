@@ -1,3 +1,48 @@
+`HEAD^^` is the father of the father (grandparent) commit
+`HEAD~2` is the same.
+`HEAD^2` is the second father of the most recent commit.
+## Modern git commands
+- git switch [-c] [branchName] [--detach commit] 
+Switch to a branch, using `git switch branchName`, to switch to new branch`git switch -c branchName`, to detatch HEAD from a branch and switch to a specific commit, `git switch --detach hash`.
+- git rm [--cached] [-r] thing
+Remove a file from index & fs (same as `rm file` and `git add file`) `git rm file`, to remove directory `git rm -r dir`, to remove a file from the index (but not locally/file) `git rm --cached thing`
+- git grep [--recurse-submodules] STRING [hash]
+Recursively search for `string`
+- git restore [--staged] file
+Restore file in staged or working tree.
+- git diff [--staged] 
+Diff staged files to HEAD.
+- git diff branch1 -- branch2
+Diff HEAD of two different branches
+- git diff [HEAD~] [HEAD]
+Diff commit1 and commit2.
+- git stash push [-m "message"]
+Stash current changes in tracked files. Optionally add a message with ``-m`
+- git stash pop 
+Pop latest stash added. 
+- git stash list
+View list of current stashes saved.
+## cool git commands
+- git config --edit [--global]
+Edit local config. Optionally edit global config.
+- git status --short --branch
+View short status, with branch name included
+- git log [--oneline] [--graph]
+View log, optionally squashed to oneliners, optionally view the tree visually as well.
+- git cherry-pick
+- git commit --amend
+Update the last commit by adding the currently staged changes, changing the commit's hash.
+- git tag [-a v0.0.0 [-m "My message"] [hash]]
+Tag HEAD with a tag v0.0.0. Optionally add message, otherwise editor is opened. Optionally tag a specific `commit`.
+- git branch --delete `branchName`
+Delete local branch `branchName`.
+- git push --delete origin branchName
+Delete remote (`origin`) branch `branchName`
+- git fetch [--prune]
+Delete local references to remote branches that have been deleted from remote
+- git pull [--rebase | --ff-only] [--autostash]
+Pull changes in remote branch. Optionally, rebase only. Optionally, fast-forward only (no conflict resolution). Optionally, autostash changes in staged & working tree.
+
 # tldr
 most if not all examples were taken by `tldr`
 ```
@@ -53,40 +98,17 @@ Restore working tree files. Requires Git version 2.23+.
 ## commit, push
 git commit [-m "commit msg"]
 git push [remote_name] [branch_name]
+
 ## revert 
 Create new commits which reverse the effect of earlier ones.
 - Revert the most recent commit:
 `git revert HEAD`
-
-- Revert the 5th last commit:
-`git revert HEAD~4`
 
 - Revert a specific commit:
 `git revert 0c01a9`
 
 - Revert multiple commits:
 `git revert branch_name~5..branch_name~2`
-
-- Don't create new commits, just change the working tree:
-`git revert -n 0c01a9..9a1743`
-
-## fetch
-Download objects and refs from a remote repository.
-
-- Fetch the latest changes from the default remote upstream repository (if set):
-`git fetch`
-
-- Fetch new branches from a specific remote upstream repository:
-`git fetch remote_name`
-
-- Fetch the latest changes from all remote upstream repositories:
-`git fetch --all`
-
-- Also fetch tags from the remote upstream repository:
-`git fetch --tags`
-
-- Delete local references to remote branches that have been deleted upstream:
-`git fetch --prune`
 
 ## pull
 
@@ -95,7 +117,7 @@ Fetch branch from a remote repository and merge it to local repository.
 - Download changes from default remote repository and merge it:
 `git pull`
 
-- Download changes from default remote repository and use fast-forward:
+- Download changes from default remote repository and use rebase:
 `git pull --rebase`
 
 - Download changes from given remote repository and branch, then merge them into HEAD:
@@ -113,31 +135,13 @@ Main Git command for working with branches.
 
 - Show the name of the current branch:
 `git branch --show-current`
-
-- Create new branch based on the current commit:
-`git branch branch_name`
-
-- Create new branch based on a specific commit:
-`git branch branch_name commit_hash`
 ## switch  
 Switch between Git branches. Requires Git version 2.23+.
 - Switch to an existing branch:
 `git switch branch_name`
 
-- Create a new branch and switch to it:
-`git switch --create branch_name`
-
-- Create a new branch based on an existing commit and switch to it:
-`git switch --create branch_name commit`
-
 - Switch to the previous branch:
 `git switch -`
-
-- Switch to a branch and update all submodules to match:
-`git switch --recurse-submodules branch_name`
-
-- Switch to a branch and automatically merge the current branch and any uncommitted changes into it:
-`git switch --merge branch_name`
 
 ## reset
 Undo commits or unstage changes, by resetting the current Git HEAD to the specified state.
@@ -146,9 +150,6 @@ if a commit hash or branch is passed, it works as "uncommit".
 
 - Unstage everything:
 `git reset`
-
-- Unstage specific file(s):
-`git reset path/to/file1 path/to/file2 ...`
 
 - Interactively unstage portions of a file:
 `git reset --patch path/to/file`
@@ -183,32 +184,3 @@ git config [--global] user.email "email@domain.org"
 1. `git checkout [branch we will merge into]`
 2. `git merge --no-ff [previous branch]`
 3. [OPTIONAL] `git branch -d [previous branch]`
-
-## rebase
-Reapply commits from one branch on top of another branch.
-Commonly used to "move" an entire branch to another base, 
-creating copies of the commits in the new location.
-
-- Rebase the current branch on top of another specified branch:
-`git rebase new_base_branch`
-
-- Start an interactive rebase, which allows the commits to be reordered, omitted, combined or modified:
-`git rebase -i target_base_branch_or_commit_hash`
-
-- Continue a rebase that was interrupted by a merge failure, after editing conflicting files:
-`git rebase --continue`
-
-- Continue a rebase that was paused due to merge conflicts, by skipping the conflicted commit:
-`git rebase --skip`
-
-- Abort a rebase in progress (e.g. if it is interrupted by a merge conflict):
-`git rebase --abort`
-
-- Move part of the current branch onto a new base, providing the old base to start from:
-`git rebase --onto new_base old_base`
-
-- Reapply the last 5 commits in-place, stopping to allow them to be reordered, omitted, combined or modified:
-`git rebase -i HEAD~5`
-
-- Auto-resolve any conflicts by favoring the working branch version (`theirs` keyword has reversed meaning in this case):
-`git rebase -X theirs branch_name`
